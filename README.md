@@ -1,2 +1,2 @@
 # bvmgo-util
-golang utilities
+My golang utilities
