@@ -2,54 +2,61 @@ package logs
 
 import (
 	"log"
+	"os"
 )
 
-// DefaultFormater is the default log formatter
+// DefaultFormater is the default message formatter for loggers.
 var DefaultFormater Formatter = &defaultFormaterImpl{}
 
-// DefaultLogLevel is the default log level
+// DefaultLogLevel is the default log level for loggers.
 var DefaultLogLevel = LevelInfo
 
-var DefaultLogger = New("")
+// DefaultOuput is the default output for loggers.
+var DefaultOuput = log.New(os.Stdout, "", 0)
 
-func init() {
-	log.Default().SetFlags(0)
-	log.Default().SetPrefix("")
+// defaultLogger is the default logger.
+var defaultLogger = New("")
+
+// DefaultLogger returns the default logger.
+func DefaultLogger() *Logger {
+	return defaultLogger
 }
 
 func Trace(attributes ...any) {
-	DefaultLogger.log(LevelTrace, attributes...)
+	defaultLogger.log(LevelTrace, attributes...)
 }
 func Tracef(format string, attributes ...any) {
-	DefaultLogger.logf(LevelTrace, format, attributes...)
+	defaultLogger.logf(LevelTrace, format, attributes...)
 }
 func Debug(attributes ...any) {
-	DefaultLogger.log(LevelDebug, attributes...)
+	defaultLogger.log(LevelDebug, attributes...)
 }
 func Debugf(format string, attributes ...any) {
-	DefaultLogger.logf(LevelDebug, format, attributes...)
+	defaultLogger.logf(LevelDebug, format, attributes...)
 }
 func Info(attributes ...any) {
-	DefaultLogger.log(LevelInfo, attributes...)
+	defaultLogger.log(LevelInfo, attributes...)
 }
 func Infof(format string, attributes ...any) {
-	DefaultLogger.logf(LevelInfo, format, attributes...)
+	defaultLogger.logf(LevelInfo, format, attributes...)
 }
 func Warn(attributes ...any) {
-	DefaultLogger.log(LevelWarn, attributes...)
+	defaultLogger.log(LevelWarn, attributes...)
 }
 func Warnf(format string, attributes ...any) {
-	DefaultLogger.logf(LevelWarn, format, attributes...)
+	defaultLogger.logf(LevelWarn, format, attributes...)
 }
 func Error(attributes ...any) {
-	DefaultLogger.log(LevelError, attributes...)
+	defaultLogger.log(LevelError, attributes...)
 }
 func Errorf(format string, attributes ...any) {
-	DefaultLogger.logf(LevelError, format, attributes...)
+	defaultLogger.logf(LevelError, format, attributes...)
 }
 func Fatal(attributes ...any) {
-	DefaultLogger.log(LevelFatal, attributes...)
+	defaultLogger.log(LevelFatal, attributes...)
+	exit(1)
 }
 func Fatalf(format string, attributes ...any) {
-	DefaultLogger.logf(LevelFatal, format, attributes...)
+	defaultLogger.logf(LevelFatal, format, attributes...)
+	exit(1)
 }

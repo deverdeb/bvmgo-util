@@ -5,6 +5,7 @@ type LogLevel uint8
 const (
 	LevelTrace LogLevel = iota
 	LevelDebug
+	LevelDefault
 	LevelInfo
 	LevelWarn
 	LevelError
@@ -17,7 +18,7 @@ func (level LogLevel) String() string {
 		return "TRACE"
 	case LevelDebug:
 		return "DEBUG"
-	case LevelInfo:
+	case LevelDefault, LevelInfo:
 		return "INFO"
 	case LevelWarn:
 		return "WARN"

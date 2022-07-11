@@ -2,6 +2,7 @@ package errors
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -21,7 +22,7 @@ func TestErrorNew(t *testing.T) {
 				format:     "my %s error",
 				attributes: []interface{}{"test"},
 			},
-			wantMessage: "my test error ( at github.com/deverdeb/bvmgo-util/errors.TestErrorNew.func1:28 )",
+			wantMessage: "my test error ( at github.com/deverdeb/bvmgo-util/errors.TestErrorNew.func1:29 )",
 		},
 	}
 	for _, tt := range tests {
@@ -51,7 +52,7 @@ func TestErrorNewWithCause(t *testing.T) {
 				format:     "my %s error",
 				attributes: []interface{}{"test"},
 			},
-			wantMessage: "my test error ( at github.com/deverdeb/bvmgo-util/errors.TestErrorNewWithCause.func1:59 )\n" +
+			wantMessage: "my test error ( at github.com/deverdeb/bvmgo-util/errors.TestErrorNewWithCause.func1:60 )\n" +
 				"    > cause by: cause error",
 		},
 	}
@@ -126,7 +127,7 @@ func TestErrorWrap(t *testing.T) {
 			args: args{
 				cause: fmt.Errorf("error message"),
 			},
-			wantMessage: "error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap.func1:143 )\n" +
+			wantMessage: "error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap.func1:144 )\n" +
 				"    > cause by: error message",
 		},
 		{
@@ -134,8 +135,8 @@ func TestErrorWrap(t *testing.T) {
 			args: args{
 				cause: New("error message"),
 			},
-			wantMessage: "error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap.func1:143 )\n" +
-				"    > cause by: error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap:133 )",
+			wantMessage: "error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap.func1:144 )\n" +
+				"    > cause by: error message ( at github.com/deverdeb/bvmgo-util/errors.TestErrorWrap:134 )",
 		},
 	}
 	for _, tt := range tests {
@@ -144,5 +145,46 @@ func TestErrorWrap(t *testing.T) {
 				t.Errorf("Wrap() error = '%v', wantErr '%v'", err, tt.wantMessage)
 			}
 		})
+	}
+}
+
+func TestErrorUnwrap(t *testing.T) {
+	type Wrapper interface {
+		Unwrap() error
+	}
+	err1 := New("error message")
+	err2, _ := Wrap(err1).(Wrapper)
+	err3 := err2.Unwrap()
+	if err1 != err3 {
+		t.Errorf("Unwrap() error = '%v', wantErr '%v'", err3, err1)
+	}
+}
+
+func TestError_Cause(t *testing.T) {
+	err1 := New("error message")
+	err2, _ := Wrap(err1).(TraceableError)
+	if err1 != err2.Cause() {
+		t.Errorf("Cause() error = '%v', wantErr '%v'", err2.Cause(), err1)
+	}
+}
+
+func TestError_File(t *testing.T) {
+	err := New("error message").(TraceableError)
+	if !strings.Contains(err.File(), "bvmgo-util/errors/error_test.go") {
+		t.Errorf("File() = '%v', want contains '%v'", err.File(), "bvmgo-util/errors/error_test.go")
+	}
+}
+
+func TestError_Function(t *testing.T) {
+	err := New("error message").(TraceableError)
+	if err.Function() != "github.com/deverdeb/bvmgo-util/errors.TestError_Function" {
+		t.Errorf("Function() = '%v', want contains '%v'", err.Function(), "github.com/deverdeb/bvmgo-util/errors.TestError_Function")
+	}
+}
+
+func TestError_Line(t *testing.T) {
+	err := New("error message").(TraceableError)
+	if err.Line() != 185 {
+		t.Errorf("Line() = '%v', want '%v'", err.Line(), 185)
 	}
 }

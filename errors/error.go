@@ -8,29 +8,36 @@ import (
 // unknownFunctionLabel is the label for unknown functions.
 var unknownFunctionLabel = "<unknown>"
 
-// TraceableError is an error with cause and stacktrace.
+// TraceableError is an error with cause.
 type TraceableError interface {
-	// Message method returns error message
+	// Error returns error message. error interface method.
+	Error() string
+	// Unwrap method returns cause error. Wrapper interface method.
+	Unwrap() error
+
+	// Message method returns error message.
 	Message() string
-	// File method returns error filename
+	// File method returns error filename.
 	File() string
-	// Line method returns line number of error in file
+	// Function method returns function of error in file.
+	Function() string
+	// Line method returns line number of error in file.
 	Line() int
-	// Cause method returns cause error
+	// Cause method returns cause error.
 	Cause() error
 }
 
 // customError is an error with cause.
 type customError struct {
-	// message is the error label
+	// message is the error label.
 	message string
-	// cause is the wrapped error
+	// cause is the wrapped error.
 	cause error
-	// file is the filename
+	// file is the filename.
 	file string
-	// function is the name of function in file
+	// function is the name of function in file.
 	function string
-	// line is the line in file
+	// line is the line in file.
 	line int
 }
 
