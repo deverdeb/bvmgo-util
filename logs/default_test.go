@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"testing"
 	"time"
 )
 
@@ -44,8 +45,8 @@ func ExampleTrace() {
 	Tracef("hidden log format")
 
 	// Output:
-	// 1982-03-15T12:56:14 [TRACE] hello everybody ( default_test.go:39 )
-	// 1982-03-15T12:56:14 [TRACE] hello 123456 ( default_test.go:40 )
+	// 1982-03-15T12:56:14 [TRACE] hello everybody ( default_test.go:40 )
+	// 1982-03-15T12:56:14 [TRACE] hello 123456 ( default_test.go:41 )
 }
 
 func ExampleDebug() {
@@ -62,8 +63,8 @@ func ExampleDebug() {
 	Debugf("hidden log format")
 
 	// Output:
-	// 1982-03-15T12:56:14 [DEBUG] hello everybody ( default_test.go:56 )
-	// 1982-03-15T12:56:14 [DEBUG] hello world ( default_test.go:58 )
+	// 1982-03-15T12:56:14 [DEBUG] hello everybody ( default_test.go:57 )
+	// 1982-03-15T12:56:14 [DEBUG] hello world ( default_test.go:59 )
 }
 
 func ExampleInfo() {
@@ -80,8 +81,8 @@ func ExampleInfo() {
 	Infof("hidden log format")
 
 	// Output:
-	// 1982-03-15T12:56:14 [ INFO] hello everybody ( default_test.go:74 )
-	// 1982-03-15T12:56:14 [ INFO] hello false ( default_test.go:76 )
+	// 1982-03-15T12:56:14 [ INFO] hello everybody ( default_test.go:75 )
+	// 1982-03-15T12:56:14 [ INFO] hello false ( default_test.go:77 )
 }
 
 func ExampleWarn() {
@@ -98,8 +99,8 @@ func ExampleWarn() {
 	Warnf("hidden log format")
 
 	// Output:
-	// 1982-03-15T12:56:14 [ WARN] hello everybody ( default_test.go:92 )
-	// 1982-03-15T12:56:14 [ WARN] hello world ( default_test.go:94 )
+	// 1982-03-15T12:56:14 [ WARN] hello everybody ( default_test.go:93 )
+	// 1982-03-15T12:56:14 [ WARN] hello world ( default_test.go:95 )
 }
 
 func ExampleError() {
@@ -116,8 +117,8 @@ func ExampleError() {
 	Errorf("hidden log format")
 
 	// Output:
-	// 1982-03-15T12:56:14 [ERROR] hello everybody ( default_test.go:110 )
-	// 1982-03-15T12:56:14 [ERROR] hello world ( default_test.go:112 )
+	// 1982-03-15T12:56:14 [ERROR] hello everybody ( default_test.go:111 )
+	// 1982-03-15T12:56:14 [ERROR] hello world ( default_test.go:113 )
 }
 
 func ExampleFatal() {
@@ -130,9 +131,9 @@ func ExampleFatal() {
 	Fatalf("hello %v", "world")
 
 	// Output:
-	// 1982-03-15T12:56:14 [FATAL] hello everybody ( default_test.go:128 )
+	// 1982-03-15T12:56:14 [FATAL] hello everybody ( default_test.go:129 )
 	// exit with code 1
-	// 1982-03-15T12:56:14 [FATAL] hello world ( default_test.go:130 )
+	// 1982-03-15T12:56:14 [FATAL] hello world ( default_test.go:131 )
 	// exit with code 1
 }
 
@@ -148,10 +149,26 @@ func ExampleLogger_Formatter() {
 	Warnf("test %v", "error", err2)
 
 	// Output:
-	// 1982-03-15T12:56:14 [ INFO] test error ( default_test.go:147 )
-	//   > error: second error ( default_test.go:143 )
+	// 1982-03-15T12:56:14 [ INFO] test error ( default_test.go:148 )
+	//   > error: second error ( default_test.go:144 )
 	//   > cause by: first error
-	// 1982-03-15T12:56:14 [ WARN] test error ( default_test.go:148 )
-	//   > error: second error ( default_test.go:143 )
+	// 1982-03-15T12:56:14 [ WARN] test error ( default_test.go:149 )
+	//   > error: second error ( default_test.go:144 )
 	//   > cause by: first error
+}
+
+func BenchmarkInfof(b *testing.B) {
+	DefaultLogger().SetLevel(LevelInfo)
+	for i := 0; i < b.N; i++ {
+		Infof("test message %d %s %v", 12, "str", true)
+	}
+}
+
+func BenchmarkInfof_WithError(b *testing.B) {
+	DefaultLogger().SetLevel(LevelInfo)
+	err1 := fmt.Errorf("first error")
+	err2 := errors.NewWithCause(err1, "second error")
+	for i := 0; i < b.N; i++ {
+		Infof("test message %d %s %v", 12, "str", true, err2)
+	}
 }
