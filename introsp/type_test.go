@@ -3,7 +3,6 @@ package introsp
 import (
 	"reflect"
 	"testing"
-	"unsafe"
 )
 
 func TestTypeName(t *testing.T) {
@@ -11,8 +10,8 @@ func TestTypeName(t *testing.T) {
 	}
 	channel := make(chan string)
 	testStruct := testStructure{}
-	var ptr uintptr = 132
-	unsafePtr := unsafe.Pointer(ptr)
+	//var ptr uintptr = 132
+	//unsafePtr := unsafe.Pointer(ptr)
 	array := [3]int{1, 2, 3}
 	slice := make([]int, 0, 3)
 	mapStrInt := make(map[string]int)
@@ -33,7 +32,7 @@ func TestTypeName(t *testing.T) {
 		{name: "map type", arg: reflect.TypeOf(mapStrInt), want: "map[string]int"},
 		{name: "chan type", arg: reflect.TypeOf(channel), want: "chan string"},
 		{name: "struct type", arg: reflect.TypeOf(testStruct), want: "testStructure"},
-		{name: "unsafe pointer type", arg: reflect.TypeOf(unsafePtr), want: "unsafe.Pointer"},
+		//{name: "unsafe pointer type", arg: reflect.TypeOf(unsafePtr), want: "unsafe.Pointer"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
