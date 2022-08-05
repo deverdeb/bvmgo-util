@@ -14,22 +14,22 @@ func Set(pointer interface{}, value interface{}) error {
 	return SetReflectValue(ptrValue.Elem(), value)
 }
 
-// SetAttribute method assigns the structure attribute to the value.
+// SetAttribute assigns the structure attribute to the value.
 func SetAttribute(structPointer interface{}, attribute string, value interface{}) error {
 	ptrValue := reflect.ValueOf(structPointer)
 	if ptrValue.Kind() != reflect.Ptr {
 		return errors.New("failed to set attribute '%s', require a pointer of structure, unsupported type %s",
-			attribute, TypeName(ptrValue.Type()))
+			attribute, TypeToString(ptrValue.Type()))
 	}
 	structValue := ptrValue.Elem()
 	if structValue.Kind() != reflect.Struct {
 		return errors.New("failed to set attribute '%s', require a pointer of structure, unsupported type %s",
-			attribute, TypeName(ptrValue.Type()))
+			attribute, TypeToString(ptrValue.Type()))
 	}
 	attributeValue := structValue.FieldByName(attribute)
 	if !attributeValue.IsValid() {
 		return errors.New("failed to set attribute '%s', attribute is not found on structure %s",
-			attribute, TypeName(structValue.Type()))
+			attribute, TypeToString(structValue.Type()))
 	}
 	if err := SetReflectValue(attributeValue, value); err != nil {
 		return errors.NewWithCause(err, "failed to set attribute '%s', error found", attribute)
@@ -37,7 +37,7 @@ func SetAttribute(structPointer interface{}, attribute string, value interface{}
 	return nil
 }
 
-// SetReflectValue method assigns the reflect.Value to the value.
+// SetReflectValue assigns the reflect.Value to the value.
 func SetReflectValue(elementValue reflect.Value, value interface{}) error {
 	if value == nil {
 		if !elementValue.CanSet() {
@@ -49,7 +49,7 @@ func SetReflectValue(elementValue reflect.Value, value interface{}) error {
 		eltType, valueType, match := findMatchType(elementValue, reflect.ValueOf(value))
 		if !match {
 			return errors.New("failed to set value, value type '%s' can not assign to variable type '%s'",
-				TypeName(valueType.Type()), TypeName(eltType.Type()))
+				TypeToString(valueType.Type()), TypeToString(eltType.Type()))
 		}
 		if !eltType.CanSet() {
 			return errors.New("failed to set value, variable can not be set (read only or not visible)")
@@ -59,7 +59,7 @@ func SetReflectValue(elementValue reflect.Value, value interface{}) error {
 	return nil
 }
 
-// findMatchType find types for element and value.
+// findMatchType finds types for element and value.
 // Types much verified valType.Type().AssignableTo(eltType.Type()).
 func findMatchType(elementType reflect.Value, valueType reflect.Value) (eltType reflect.Value, valType reflect.Value, match bool) {
 	eltType = elementType

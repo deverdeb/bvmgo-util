@@ -38,7 +38,7 @@ func (context *Context) Add(element interface{}) error {
 	if element == nil {
 		return errors.New("context does not support nil element")
 	}
-	return context.AddWithName(element, introsp.TypeName(reflect.TypeOf(element)))
+	return context.AddWithName(element, introsp.TypeToString(reflect.TypeOf(element)))
 }
 
 // AddWithName add an element with a name to context.
@@ -136,10 +136,10 @@ func (context *Context) injectDependencies(information *elementInformation) erro
 				dependency, err = context.getElementByType(fieldType)
 				if err != nil {
 					return errors.NewWithCause(err, "failed to find '%s' dependency (by type: %s) of '%s' element",
-						field.Name, introsp.TypeName(fieldType), information.ToString())
+						field.Name, introsp.TypeToString(fieldType), information.ToString())
 				} else if dependency == nil {
 					return errors.New("missing '%s' dependency (by type: %s) of '%s' element",
-						field.Name, introsp.TypeName(fieldType), information.ToString())
+						field.Name, introsp.TypeToString(fieldType), information.ToString())
 				}
 			} else {
 				dependency, err = context.getElementByName(dependencyName)
@@ -242,7 +242,7 @@ func (context *Context) getElementByType(eltType reflect.Type) (*elementInformat
 			}
 			eltsInfo += element.ToString()
 		}
-		return nil, errors.New("too many elements for type '%s': %s", introsp.TypeName(eltType), eltsInfo)
+		return nil, errors.New("too many elements for type '%s': %s", introsp.TypeToString(eltType), eltsInfo)
 	}
 }
 
@@ -256,7 +256,7 @@ func (context *Context) GetByType(eltType reflect.Type) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	} else if element == nil {
-		return nil, errors.NewWithCause(err, "cannot find element with '%s' type", introsp.TypeName(eltType))
+		return nil, errors.NewWithCause(err, "cannot find element with '%s' type", introsp.TypeToString(eltType))
 	} else {
 		return context.extractElementValue(element)
 	}
@@ -333,7 +333,7 @@ func (context *Context) GetByNameAndType(name string, eltType reflect.Type) (int
 		return context.extractElementValue(elements[0])
 	} else if len(elements) <= 0 {
 		return nil, errors.New("cannot find element with '%s' name and '%s' type",
-			name, introsp.TypeName(eltType))
+			name, introsp.TypeToString(eltType))
 	} else {
 		eltsInfo := ""
 		for _, element := range elements {
@@ -343,7 +343,7 @@ func (context *Context) GetByNameAndType(name string, eltType reflect.Type) (int
 			eltsInfo += element.ToString()
 		}
 		return nil, errors.New("too many elements for name '%s' and type '%s': %s",
-			name, introsp.TypeName(eltType), eltsInfo)
+			name, introsp.TypeToString(eltType), eltsInfo)
 	}
 }
 

@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-type TestInterface interface {
+type TestSetterInterface interface {
 	method(testParam string) int
 }
-type TestStruct struct {
+type TestSetterStruct struct {
 	a int
 	b string
 	c bool
 }
 
-func (test TestStruct) method(testParam string) int {
+func (test TestSetterStruct) method(testParam string) int {
 	return len(testParam) * 2
 }
 
@@ -89,8 +89,8 @@ func TestSet_string(t *testing.T) {
 	}
 }
 func TestSet_struct(t *testing.T) {
-	var variable = TestStruct{a: 0, b: "first", c: false}
-	var value = TestStruct{a: 1234, b: "second", c: true}
+	var variable = TestSetterStruct{a: 0, b: "first", c: false}
+	var value = TestSetterStruct{a: 1234, b: "second", c: true}
 	if err := Set(&variable, value); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
 	}
@@ -99,8 +99,8 @@ func TestSet_struct(t *testing.T) {
 	}
 }
 func TestSet_pointerValue(t *testing.T) {
-	var variable = TestStruct{a: 0, b: "first", c: false}
-	var value = TestStruct{a: 1234, b: "second", c: true}
+	var variable = TestSetterStruct{a: 0, b: "first", c: false}
+	var value = TestSetterStruct{a: 1234, b: "second", c: true}
 	// Call "Set" method with a pointer for value.
 	if err := Set(&variable, &value); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
@@ -110,8 +110,8 @@ func TestSet_pointerValue(t *testing.T) {
 	}
 }
 func TestSet_pointerVariableAndPointerValue(t *testing.T) {
-	var variable *TestStruct = nil
-	var value = &TestStruct{a: 1234, b: "second", c: true}
+	var variable *TestSetterStruct = nil
+	var value = &TestSetterStruct{a: 1234, b: "second", c: true}
 	// Call "Set" method with variable pointer address.
 	if err := Set(&variable, value); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
@@ -121,8 +121,8 @@ func TestSet_pointerVariableAndPointerValue(t *testing.T) {
 	}
 }
 func TestSet_interface(t *testing.T) {
-	var variable TestInterface = nil
-	var value = &TestStruct{a: 1234, b: "second", c: true}
+	var variable TestSetterInterface = nil
+	var value = &TestSetterStruct{a: 1234, b: "second", c: true}
 	// Call "Set" method with variable pointer address.
 	if err := Set(&variable, value); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
@@ -140,7 +140,7 @@ func TestSet_nilVariable(t *testing.T) {
 	}
 }
 func TestSet_nilValueToPointer(t *testing.T) {
-	var variable TestInterface = &TestStruct{a: 1234, b: "second", c: true}
+	var variable TestSetterInterface = &TestSetterStruct{a: 1234, b: "second", c: true}
 	if err := Set(&variable, nil); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
 	}
@@ -149,8 +149,8 @@ func TestSet_nilValueToPointer(t *testing.T) {
 	}
 }
 func TestSet_nilValueToStruct(t *testing.T) {
-	variable := TestStruct{a: 1234, b: "second", c: true}
-	zeroValue := TestStruct{} // Default value for type
+	variable := TestSetterStruct{a: 1234, b: "second", c: true}
+	zeroValue := TestSetterStruct{} // Default value for type
 	if err := Set(&variable, nil); err != nil {
 		t.Errorf("Set() error = %v, want no Error", err)
 	}
@@ -194,10 +194,10 @@ func TestSetAttribute_string(t *testing.T) {
 }
 func TestSetAttribute_struct(t *testing.T) {
 	type TestSetStruct struct {
-		AttribStruct TestStruct
+		AttribStruct TestSetterStruct
 	}
 	testObj := TestSetStruct{}
-	value := TestStruct{a: 1234, b: "test", c: true}
+	value := TestSetterStruct{a: 1234, b: "test", c: true}
 	if err := SetAttribute(&testObj, "AttribStruct", value); err != nil {
 		t.Errorf("SetAttribute() error = %v, want no Error", err)
 	}
@@ -207,10 +207,10 @@ func TestSetAttribute_struct(t *testing.T) {
 }
 func TestSetAttribute_pointer(t *testing.T) {
 	type TestSetStruct struct {
-		AttribStruct *TestStruct
+		AttribStruct *TestSetterStruct
 	}
 	testObj := TestSetStruct{}
-	value := TestStruct{a: 1234, b: "test", c: true}
+	value := TestSetterStruct{a: 1234, b: "test", c: true}
 	if err := SetAttribute(&testObj, "AttribStruct", &value); err != nil {
 		t.Errorf("SetAttribute() error = %v, want no Error", err)
 	}
