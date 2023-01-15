@@ -35,5 +35,5 @@ func main() {
 	term.DisplayInformations()
 
 	toto := logs.New("main")
-	toto.Info("hello", "les", "copains")
+	toto.Info("hello", "world", "...")
 }
